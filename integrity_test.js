@@ -185,6 +185,8 @@ async function run() {
       '/api/metas',
       '/api/balcao',
       '/api/delivery',
+      '/api/atendimento/resumo',
+      '/api/atendimento/fila?limite=10',
       '/api/relatorio-gerencial'
     ];
 
@@ -203,6 +205,21 @@ async function run() {
       pass('Relatório payload', 'Campos essenciais presentes');
     } else {
       fail('Relatório payload', `Campos ausentes: ${requiredKeys.filter((k) => !(k in (relatorio.data || {}))).join(', ')}`);
+    }
+
+    const atendimentoResumo = await requestJson('GET', '/api/atendimento/resumo');
+    const atendimentoResumoKeys = ['balcao_abertos', 'delivery_abertos', 'total_abertos', 'faturamento_hoje'];
+    if (atendimentoResumo.status === 200 && atendimentoResumo.data && atendimentoResumoKeys.every((k) => k in atendimentoResumo.data)) {
+      pass('Atendimento resumo payload', 'Campos essenciais presentes');
+    } else {
+      fail('Atendimento resumo payload', `Campos ausentes: ${atendimentoResumoKeys.filter((k) => !(k in (atendimentoResumo.data || {}))).join(', ')}`);
+    }
+
+    const atendimentoFila = await requestJson('GET', '/api/atendimento/fila?limite=10');
+    if (atendimentoFila.status === 200 && Array.isArray(atendimentoFila.data)) {
+      pass('Atendimento fila payload', `Lista recebida com ${atendimentoFila.data.length} item(ns)`);
+    } else {
+      fail('Atendimento fila payload', `Status ${atendimentoFila.status}`);
     }
 
     const balcaoCreate = await requestJson('POST', '/api/balcao', {

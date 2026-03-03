@@ -113,10 +113,10 @@
                         </div>
                     </div>
                     <div class="mesas-filtro-bar">
-                        <button class="btn btn-sm mesa-filtro-btn active" onclick="filtrarMesas('todos')">Todas</button>
-                        <button class="btn btn-sm mesa-filtro-btn" onclick="filtrarMesas('livre')">🟢 Livres</button>
-                        <button class="btn btn-sm mesa-filtro-btn" onclick="filtrarMesas('ocupada')">🔴 Ocupadas</button>
-                        <button class="btn btn-sm mesa-filtro-btn" onclick="filtrarMesas('reservada')">🟡 Reservadas</button>
+                        <button class="btn btn-sm mesa-filtro-btn active" onclick="filtrarMesas('todos', this)">Todas</button>
+                        <button class="btn btn-sm mesa-filtro-btn" onclick="filtrarMesas('livre', this)">🟢 Livres</button>
+                        <button class="btn btn-sm mesa-filtro-btn" onclick="filtrarMesas('ocupada', this)">🔴 Ocupadas</button>
+                        <button class="btn btn-sm mesa-filtro-btn" onclick="filtrarMesas('reservada', this)">🟡 Reservadas</button>
                     </div>
                     <div id="mapa-mesas" class="mapa-mesas-grid"></div>
                     <div class="panel form-panel" style="margin-top:12px;">
@@ -133,6 +133,66 @@
                             </select>
                             <button class="btn" id="btn-criar-mesa" onclick="criarMesa()">Criar Mesa</button>
                         </div>
+                    </div>
+
+                    <div class="panel form-panel" style="margin-top:12px;">
+                        <h4>🧾 Lançamento na Mesa</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Mesa *</label>
+                                <select id="lancamento-mesa-numero"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Produto</label>
+                                <select id="lancamento-mesa-produto"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Item *</label>
+                                <input type="text" id="lancamento-mesa-item" placeholder="Ex: Suco de laranja">
+                            </div>
+                            <div class="form-group">
+                                <label>Quantidade *</label>
+                                <input type="number" id="lancamento-mesa-quantidade" min="0.01" step="0.01" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Valor Unitário *</label>
+                                <input type="number" id="lancamento-mesa-valor" min="0.01" step="0.01" placeholder="0,00">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Observação</label>
+                                <input type="text" id="lancamento-mesa-obs" placeholder="Opcional (sem cebola, adicional, etc.)">
+                            </div>
+                            <div class="form-actions full-width">
+                                <button class="btn" id="btn-lancar-mesa" onclick="salvarLancamentoMesa()">Lançar na Mesa</button>
+                                <button class="btn btn-secondary" onclick="carregarLancamentosMesa()">Atualizar Lançamentos</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-top:12px;">
+                        <div class="panel-header">
+                            <h4>📋 Últimos Lançamentos de Mesa</h4>
+                            <div class="filter-row">
+                                <label for="filtro-lancamento-mesa" style="margin:0;">Filtrar mesa:</label>
+                                <select id="filtro-lancamento-mesa" onchange="carregarLancamentosMesa()"></select>
+                                <strong id="lancamentos-mesa-total">Total: R$ 0,00</strong>
+                            </div>
+                        </div>
+                        <table id="tabela-lancamentos-mesa">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Mesa</th>
+                                    <th>Item</th>
+                                    <th>Qtd</th>
+                                    <th>V. Unitário</th>
+                                    <th>Subtotal</th>
+                                    <th>Usuário</th>
+                                    <th>Obs.</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -1212,6 +1272,16 @@
                     <div class="form-group"><label>Data *</label><input type="date" id="reserva-data" required></div>
                     <div class="form-group"><label>Hora *</label><input type="time" id="reserva-hora" required></div>
                     <div class="form-group"><label>Pessoas</label><input type="number" id="reserva-pessoas" min="1" value="2"></div>
+                    <div class="form-group"><label>Canal da Reserva</label>
+                        <select id="reserva-canal">
+                            <option value="telefone">Telefone</option>
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="presencial">Presencial</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="site">Site</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Sinal (R$)</label><input type="number" id="reserva-sinal" step="0.01" min="0" value="0"></div>
                     <div class="form-group full-width"><label>Observação</label><textarea id="reserva-obs" rows="2"></textarea></div>
                     <div class="form-actions full-width"><button type="submit" class="btn">Criar Reserva</button></div>
                 </form>
@@ -1394,12 +1464,15 @@
                     </div>
                     <div class="form-group"><label>Valor (R$) *</label><input type="number" id="despesa-valor" step="0.01" required></div>
                     <div class="form-group"><label>Vencimento</label><input type="date" id="despesa-vencimento"></div>
+                    <div class="form-group"><label>Pagamento</label><input type="date" id="despesa-pagamento"></div>
                     <div class="form-group"><label>Status</label>
                         <select id="despesa-status">
                             <option value="pendente" selected>Pendente</option>
                             <option value="pago">Pago</option>
                         </select>
                     </div>
+                    <div class="form-group"><label>Centro de Custo</label><input type="text" id="despesa-centro-custo" placeholder="Ex.: Operação, Marketing..."></div>
+                    <div class="form-group"><label>Nº Documento</label><input type="text" id="despesa-documento" placeholder="Ex.: NF 000123"></div>
                     <div class="form-group"><label><input type="checkbox" id="despesa-recorrente"> Recorrente</label></div>
                     <div class="form-group full-width"><label>Observação</label><textarea id="despesa-obs" rows="2"></textarea></div>
                     <div class="form-actions full-width">
@@ -1489,6 +1562,26 @@
         <!-- ===== TAB CARDÁPIO ===== -->
         <section id="tab-cardapio" class="tab-content">
             <section class="panel">
+                <h3>⚙️ Configuração de Cardápio</h3>
+                <form id="form-cardapio-config" class="form-grid" onsubmit="event.preventDefault(); salvarConfiguracaoCardapio()">
+                    <div class="form-group">
+                        <label>Produto *</label>
+                        <select id="cardapio-produto" required>
+                            <option value="">Selecione um produto...</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Ordem de Exibição</label><input type="number" id="cardapio-ordem" min="0" value="0"></div>
+                    <div class="form-group"><label>Imagem URL</label><input type="text" id="cardapio-imagem" placeholder="https://..."></div>
+                    <div class="form-group"><label><input type="checkbox" id="cardapio-destaque"> Produto em destaque</label></div>
+                    <div class="form-group"><label><input type="checkbox" id="cardapio-disponivel" checked> Produto disponível</label></div>
+                    <div class="form-group full-width"><label>Descrição no Cardápio</label><textarea id="cardapio-descricao" rows="2" placeholder="Descrição para cliente (ingredientes, porção, etc.)"></textarea></div>
+                    <div class="form-actions full-width">
+                        <button class="btn" type="submit">Salvar Configuração</button>
+                        <button class="btn btn-secondary" type="button" onclick="limparFormCardapio()">Limpar</button>
+                    </div>
+                </form>
+            </section>
+            <section class="panel">
                 <h3>🍽️ Cardápio Digital</h3>
                 <p style="color:var(--text-light);margin-bottom:15px;">Visualize o cardápio organizado por categorias</p>
                 <div id="cardapio-container" class="cardapio-grid"></div>
@@ -1545,12 +1638,26 @@
                     <div class="form-group"><label>Cliente</label><input type="text" id="balcao-cliente" placeholder="Cliente Balcão"></div>
                     <div class="form-group"><label>Itens (texto)</label><input type="text" id="balcao-itens" placeholder="Ex.: 2x X-Burger, 1x Refri"></div>
                     <div class="form-group"><label>Valor Total (R$) *</label><input type="number" id="balcao-total-pedido" step="0.01" min="0.01" required></div>
+                    <div class="form-group"><label>Canal</label>
+                        <select id="balcao-canal">
+                            <option value="presencial">Presencial</option>
+                            <option value="telefone">Telefone</option>
+                            <option value="whatsapp">WhatsApp</option>
+                        </select>
+                    </div>
                     <div class="form-group"><label>Pagamento</label>
                         <select id="balcao-pagamento">
                             <option value="dinheiro">Dinheiro</option>
                             <option value="pix">PIX</option>
                             <option value="cartao_credito">Cartão Crédito</option>
                             <option value="cartao_debito">Cartão Débito</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Prioridade</label>
+                        <select id="balcao-prioridade">
+                            <option value="normal">Normal</option>
+                            <option value="alta">Alta</option>
+                            <option value="urgente">Urgente</option>
                         </select>
                     </div>
                     <div class="form-group"><label>Status Inicial</label>
@@ -1607,9 +1714,19 @@
                     <div class="form-group"><label>Telefone</label><input type="text" id="delivery-telefone"></div>
                     <div class="form-group"><label>Endereço *</label><input type="text" id="delivery-endereco" required></div>
                     <div class="form-group"><label>Bairro</label><input type="text" id="delivery-bairro"></div>
+                    <div class="form-group"><label>Origem do Pedido</label>
+                        <select id="delivery-origem">
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="telefone">Telefone</option>
+                            <option value="app">App</option>
+                            <option value="site">Site</option>
+                            <option value="ifood">iFood</option>
+                        </select>
+                    </div>
                     <div class="form-group"><label>Itens (texto)</label><input type="text" id="delivery-itens" placeholder="Ex.: 1x Pizza, 1x Suco"></div>
                     <div class="form-group"><label>Valor Pedido (R$) *</label><input type="number" id="delivery-valor" step="0.01" min="0.01" required></div>
                     <div class="form-group"><label>Taxa Entrega (R$)</label><input type="number" id="delivery-taxa" step="0.01" min="0" value="0"></div>
+                    <div class="form-group"><label>Previsão (min)</label><input type="number" id="delivery-previsao" min="0" value="45"></div>
                     <div class="form-group"><label>Pagamento</label>
                         <select id="delivery-pagamento">
                             <option value="dinheiro">Dinheiro</option>
@@ -1731,10 +1848,100 @@
             sections.forEach((el) => el.classList.add('space-y-4', 'md:space-y-5'));
         }
 
+        function arredondarProximaMeiaHora(date = new Date()) {
+            const d = new Date(date);
+            d.setMinutes(d.getMinutes() + 30);
+            d.setSeconds(0, 0);
+            const minutes = d.getMinutes();
+            d.setMinutes(minutes < 30 ? 30 : 0);
+            if (minutes >= 30) d.setHours(d.getHours() + 1);
+            return d;
+        }
+
+        function formatarHoraInput(date) {
+            const hh = String(date.getHours()).padStart(2, '0');
+            const mm = String(date.getMinutes()).padStart(2, '0');
+            return `${hh}:${mm}`;
+        }
+
+        function inicializarAutomacaoFormularios() {
+            const hoje = new Date();
+            const campoDataReserva = document.getElementById('reserva-data');
+            const campoHoraReserva = document.getElementById('reserva-hora');
+            if (campoDataReserva && !campoDataReserva.value) {
+                campoDataReserva.value = hoje.toISOString().split('T')[0];
+            }
+            if (campoHoraReserva && !campoHoraReserva.value) {
+                campoHoraReserva.value = formatarHoraInput(arredondarProximaMeiaHora(hoje));
+            }
+
+            const statusDespesa = document.getElementById('despesa-status');
+            const dataPagamento = document.getElementById('despesa-pagamento');
+            if (statusDespesa && dataPagamento) {
+                statusDespesa.addEventListener('change', () => {
+                    if (statusDespesa.value === 'pago' && !dataPagamento.value) {
+                        dataPagamento.value = new Date().toISOString().split('T')[0];
+                    }
+                    if (statusDespesa.value !== 'pago') {
+                        dataPagamento.value = '';
+                    }
+                });
+                dataPagamento.addEventListener('change', () => {
+                    if (dataPagamento.value) statusDespesa.value = 'pago';
+                });
+            }
+
+            const campoTaxa = document.getElementById('delivery-taxa');
+            const campoBairro = document.getElementById('delivery-bairro');
+            if (campoTaxa && campoBairro) {
+                campoBairro.addEventListener('change', () => {
+                    const bairro = (campoBairro.value || '').toLowerCase();
+                    if (!campoTaxa.value || Number(campoTaxa.value) === 0) {
+                        if (bairro.includes('centro')) campoTaxa.value = '5.00';
+                        else if (bairro) campoTaxa.value = '8.00';
+                    }
+                });
+            }
+
+            const produtoCardapio = document.getElementById('cardapio-produto');
+            const descricaoCardapio = document.getElementById('cardapio-descricao');
+            if (produtoCardapio && descricaoCardapio) {
+                produtoCardapio.addEventListener('change', () => {
+                    const produto = cardapioCache.find(p => Number(p.id_produto) === Number(produtoCardapio.value));
+                    if (produto && !descricaoCardapio.value) {
+                        descricaoCardapio.value = produto.descricao_cardapio || produto.descricao || '';
+                    }
+                });
+            }
+        }
+
+        function estimarTotalItensTexto(itensTexto) {
+            const nomes = (itensTexto || '')
+                .split(',')
+                .map(x => x.trim().toLowerCase())
+                .filter(Boolean);
+            if (!nomes.length || !Array.isArray(cardapioCache) || !cardapioCache.length) return 0;
+
+            const mapaPrecos = {};
+            cardapioCache.forEach(p => {
+                const chave = String(p.nome || '').trim().toLowerCase();
+                if (chave) mapaPrecos[chave] = Number(p.preco_venda || 0);
+            });
+
+            return nomes.reduce((acc, nome) => acc + (mapaPrecos[nome] || 0), 0);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             aplicarTailwindLayout();
+            inicializarAutomacaoFormularios();
             const btn = document.getElementById('theme-toggle-btn');
             btn.addEventListener('click', alternarTema);
+
+            const selectProdutoLancamento = document.getElementById('lancamento-mesa-produto');
+            if (selectProdutoLancamento) {
+                selectProdutoLancamento.addEventListener('change', preencherItemPorProdutoLancamentoMesa);
+            }
+
             if (document.documentElement.getAttribute('data-theme') === 'dark') {
                 btn.textContent = '☀️';
                 btn.title = 'Ativar modo claro';
@@ -1747,6 +1954,7 @@
         let produtosCache = [];
         let comprasCache = [];
         let comprasFormularioProdutoCache = [];
+        let cardapioCache = [];
         let ultimoAlertaSonoroCozinha = 0;
         let insumosCache = [];
         const relatoriosCache = {
@@ -2053,10 +2261,10 @@
             }
         }
 
-        function filtrarMesas(filtro) {
+        function filtrarMesas(filtro, botao = null) {
             mesaFiltroAtual = filtro;
             document.querySelectorAll('.mesa-filtro-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (botao) botao.classList.add('active');
             const cards = document.querySelectorAll('#mapa-mesas .mesa-card-wrapper');
             cards.forEach(card => {
                 const status = card.dataset.status;
@@ -2084,6 +2292,138 @@
             } catch (err) {
                 mostrarToast('Erro de conexão.', 'error');
             }
+        }
+
+        function preencherSelectMesasLancamento(mesas = []) {
+            const selectMesa = document.getElementById('lancamento-mesa-numero');
+            const selectFiltro = document.getElementById('filtro-lancamento-mesa');
+            if (!selectMesa || !selectFiltro) return;
+
+            const atualMesa = selectMesa.value;
+            const atualFiltro = selectFiltro.value;
+            const optionsMesas = (mesas || [])
+                .map(m => Number(m.numero_mesa || 0))
+                .filter(n => n > 0)
+                .sort((a, b) => a - b)
+                .map(numero => `<option value="${numero}">Mesa ${numero}</option>`)
+                .join('');
+
+            selectMesa.innerHTML = `<option value="">Selecione a mesa...</option>${optionsMesas}`;
+            selectFiltro.innerHTML = `<option value="">Todas</option>${optionsMesas}`;
+
+            if (atualMesa && selectMesa.querySelector(`option[value="${atualMesa}"]`)) {
+                selectMesa.value = atualMesa;
+            }
+            if (atualFiltro && selectFiltro.querySelector(`option[value="${atualFiltro}"]`)) {
+                selectFiltro.value = atualFiltro;
+            }
+        }
+
+        function atualizarSelectProdutosLancamentoMesa() {
+            const select = document.getElementById('lancamento-mesa-produto');
+            if (!select) return;
+            const valorAtual = select.value;
+            select.innerHTML = '<option value="">Produto (opcional)</option>' +
+                (produtosCache || []).map(prod => `
+                    <option value="${prod.id_produto}" data-nome="${String(prod.nome || '').replace(/"/g, '&quot;')}" data-preco="${Number(prod.preco_venda || 0)}">
+                        ${prod.nome} - R$ ${Number(prod.preco_venda || 0).toFixed(2)}
+                    </option>
+                `).join('');
+            if (valorAtual && select.querySelector(`option[value="${valorAtual}"]`)) {
+                select.value = valorAtual;
+            }
+        }
+
+        function preencherItemPorProdutoLancamentoMesa() {
+            const selectProduto = document.getElementById('lancamento-mesa-produto');
+            const inputItem = document.getElementById('lancamento-mesa-item');
+            const inputValor = document.getElementById('lancamento-mesa-valor');
+            if (!selectProduto || !inputItem || !inputValor) return;
+
+            const opcao = selectProduto.options[selectProduto.selectedIndex];
+            if (!opcao || !selectProduto.value) return;
+
+            const nome = opcao.getAttribute('data-nome') || '';
+            const preco = Number(opcao.getAttribute('data-preco') || 0);
+            if (!inputItem.value) inputItem.value = nome;
+            if (!inputValor.value || Number(inputValor.value) <= 0) inputValor.value = preco.toFixed(2);
+        }
+
+        async function salvarLancamentoMesa() {
+            const numeroMesa = Number(document.getElementById('lancamento-mesa-numero')?.value || 0);
+            const idProduto = Number(document.getElementById('lancamento-mesa-produto')?.value || 0);
+            const itemNome = String(document.getElementById('lancamento-mesa-item')?.value || '').trim();
+            const quantidade = Number(document.getElementById('lancamento-mesa-quantidade')?.value || 0);
+            const valorUnitario = Number(document.getElementById('lancamento-mesa-valor')?.value || 0);
+            const observacao = String(document.getElementById('lancamento-mesa-obs')?.value || '').trim();
+
+            if (!numeroMesa || !itemNome || quantidade <= 0 || valorUnitario <= 0) {
+                mostrarToast('Preencha mesa, item, quantidade e valor unitário válidos.', 'warning');
+                return;
+            }
+
+            setLoading('btn-lancar-mesa', true);
+            try {
+                const res = await fetch(`${API}/api/mesas/lancamentos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        numero_mesa: numeroMesa,
+                        id_produto: idProduto || null,
+                        item_nome: itemNome,
+                        quantidade,
+                        valor_unitario: valorUnitario,
+                        observacao,
+                        usuario: localStorage.getItem('usuarioLogado') || 'sistema'
+                    })
+                });
+
+                const data = await res.json();
+                mostrarToast(data.message || (res.ok ? 'Lançamento registrado.' : 'Erro ao lançar item.'), res.ok ? 'success' : 'error');
+                if (!res.ok) return;
+
+                document.getElementById('lancamento-mesa-item').value = '';
+                document.getElementById('lancamento-mesa-quantidade').value = '1';
+                document.getElementById('lancamento-mesa-valor').value = '';
+                document.getElementById('lancamento-mesa-obs').value = '';
+                document.getElementById('lancamento-mesa-produto').value = '';
+
+                await Promise.allSettled([carregarMesas(), carregarLancamentosMesa(), carregarDashboardDetalhes()]);
+            } catch (erro) {
+                mostrarToast('Erro de conexão ao registrar lançamento da mesa.', 'error');
+            } finally {
+                setLoading('btn-lancar-mesa', false);
+            }
+        }
+
+        async function carregarLancamentosMesa() {
+            const selectFiltro = document.getElementById('filtro-lancamento-mesa');
+            const numeroMesa = Number(selectFiltro?.value || 0);
+            const params = new URLSearchParams({ limite: '80' });
+            if (numeroMesa > 0) params.set('numero_mesa', String(numeroMesa));
+
+            const dados = await apiGet(`/api/mesas/lancamentos?${params.toString()}`, []);
+            const tbody = document.querySelector('#tabela-lancamentos-mesa tbody');
+            if (!tbody) return;
+
+            const total = (dados || []).reduce((acc, row) => acc + Number(row.subtotal || 0), 0);
+            const totalEl = document.getElementById('lancamentos-mesa-total');
+            if (totalEl) {
+                totalEl.textContent = `Total: ${formatarMoeda(total)}`;
+            }
+
+            tbody.innerHTML = (dados || []).map(row => `
+                <tr>
+                    <td>${formatarDataHora(row.criado_em)}</td>
+                    <td>Mesa ${row.numero_mesa}</td>
+                    <td>${row.produto_nome || row.item_nome || '-'}</td>
+                    <td>${Number(row.quantidade || 0).toFixed(2)}</td>
+                    <td>${formatarMoeda(row.valor_unitario || 0)}</td>
+                    <td>${formatarMoeda(row.subtotal || 0)}</td>
+                    <td>${row.usuario || '-'}</td>
+                    <td>${row.observacao || '-'}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="8">Nenhum lançamento encontrado.</td></tr>';
         }
 
         /* ===== FORMAT HELPERS ===== */
@@ -2119,9 +2459,9 @@
                 dashboard: true,
                 cozinha: true,
                 financeiro: true,
-                produtos: nivel === 'admin',
+                produtos: true,
                 operacoes: true,
-                usuarios: nivel === 'admin',
+                usuarios: true,
                 fornecedores: true,
                 reservas: true,
                 estoque: true,
@@ -2187,6 +2527,7 @@
                 carregarCategoriasProduto(),
                 carregarInsumosCompra(),
                 carregarProdutos(),
+                carregarLancamentosMesa(),
                 carregarResumoProdutos(),
                 carregarEstoqueBaixo(),
                 carregarRankingProdutos(),
@@ -2360,6 +2701,7 @@
             const resposta = await fetch(`${API}/api/mesas`);
             const dados = await resposta.json();
             const mapaMesas = document.getElementById('mapa-mesas');
+            preencherSelectMesasLancamento(dados);
 
             // Resumo
             const total = dados.length;
@@ -3548,6 +3890,7 @@
             const resposta = await fetch(url);
             const produtos = await resposta.json();
             produtosCache = produtos;
+            atualizarSelectProdutosLancamentoMesa();
             const corpoTabela = document.querySelector('#tabela-produtos tbody');
             corpoTabela.innerHTML = produtos.map(produto => `
                 <tr>
@@ -4229,14 +4572,22 @@
             document.getElementById('reservas-confirmadas-num').textContent = items.filter(r => r.status === 'confirmada').length;
         }
         async function salvarReserva() {
+            const canal = document.getElementById('reserva-canal').value;
+            const sinal = Number(document.getElementById('reserva-sinal').value || 0);
+            const obsBase = document.getElementById('reserva-obs').value;
+            const obsExtra = `Canal: ${canal}${sinal > 0 ? ` | Sinal: R$ ${sinal.toFixed(2)}` : ''}`;
+            const campoData = document.getElementById('reserva-data');
+            const campoHora = document.getElementById('reserva-hora');
+            if (!campoData.value) campoData.value = new Date().toISOString().split('T')[0];
+            if (!campoHora.value) campoHora.value = formatarHoraInput(arredondarProximaMeiaHora());
             const body = {
                 numero_mesa: document.getElementById('reserva-mesa').value,
                 cliente_nome: document.getElementById('reserva-cliente').value,
                 cliente_telefone: document.getElementById('reserva-telefone').value,
-                data_reserva: document.getElementById('reserva-data').value,
-                hora_reserva: document.getElementById('reserva-hora').value,
+                data_reserva: campoData.value,
+                hora_reserva: campoHora.value,
                 qtd_pessoas: document.getElementById('reserva-pessoas').value,
-                observacao: document.getElementById('reserva-obs').value
+                observacao: `${obsBase ? obsBase + ' | ' : ''}${obsExtra}`
             };
             if (!body.numero_mesa || !body.cliente_nome || !body.data_reserva || !body.hora_reserva)
                 return mostrarToast('Preencha mesa, cliente, data e hora.', 'warning');
@@ -4427,14 +4778,24 @@
         }
         async function salvarDespesa() {
             const id = document.getElementById('despesa-id').value;
+            const centroCusto = document.getElementById('despesa-centro-custo').value;
+            const documento = document.getElementById('despesa-documento').value;
+            const obsBase = document.getElementById('despesa-obs').value;
+            const obsExtra = [centroCusto ? `Centro Custo: ${centroCusto}` : '', documento ? `Documento: ${documento}` : ''].filter(Boolean).join(' | ');
+            const dataVencimento = document.getElementById('despesa-vencimento').value || null;
+            const dataPagamento = document.getElementById('despesa-pagamento').value || null;
+            let status = document.getElementById('despesa-status').value;
+            if (dataPagamento) status = 'pago';
+            else if (dataVencimento && new Date(dataVencimento) < new Date(new Date().toDateString())) status = 'atrasado';
             const body = {
                 descricao: document.getElementById('despesa-descricao').value,
                 categoria: document.getElementById('despesa-categoria').value,
                 valor: document.getElementById('despesa-valor').value,
-                data_vencimento: document.getElementById('despesa-vencimento').value || null,
-                status: document.getElementById('despesa-status').value,
+                data_vencimento: dataVencimento,
+                data_pagamento: dataPagamento,
+                status,
                 recorrente: document.getElementById('despesa-recorrente').checked,
-                observacao: document.getElementById('despesa-obs').value
+                observacao: `${obsBase ? obsBase + ' | ' : ''}${obsExtra}`
             };
             if (!body.descricao || !body.valor) return mostrarToast('Descrição e valor são obrigatórios.', 'warning');
             const url = id ? `/api/despesas/${id}` : '/api/despesas';
@@ -4446,7 +4807,7 @@
         }
         function limparFormDespesa() {
             document.getElementById('despesa-id').value = '';
-            ['despesa-descricao','despesa-valor','despesa-vencimento','despesa-obs'].forEach(id => document.getElementById(id).value = '');
+            ['despesa-descricao','despesa-valor','despesa-vencimento','despesa-pagamento','despesa-centro-custo','despesa-documento','despesa-obs'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('despesa-categoria').value = 'outros';
             document.getElementById('despesa-status').value = 'pendente';
             document.getElementById('despesa-recorrente').checked = false;
@@ -4460,6 +4821,7 @@
             document.getElementById('despesa-categoria').value = d.categoria;
             document.getElementById('despesa-valor').value = d.valor;
             document.getElementById('despesa-vencimento').value = d.data_vencimento ? d.data_vencimento.split('T')[0] : '';
+            document.getElementById('despesa-pagamento').value = d.data_pagamento ? d.data_pagamento.split('T')[0] : '';
             document.getElementById('despesa-status').value = d.status;
             document.getElementById('despesa-recorrente').checked = !!d.recorrente;
             document.getElementById('despesa-obs').value = d.observacao || '';
@@ -4540,6 +4902,7 @@
         /* ===== CARDÁPIO ===== */
         async function carregarCardapio() {
             const data = await apiGet('/api/cardapio', []);
+            cardapioCache = data;
             const container = document.getElementById('cardapio-container');
             const categorias = {};
             data.forEach(p => {
@@ -4547,6 +4910,7 @@
                 if (!categorias[cat]) categorias[cat] = [];
                 categorias[cat].push(p);
             });
+            carregarProdutosNoFormCardapio(data);
             container.innerHTML = Object.entries(categorias).map(([cat, produtos]) => `
                 <div class="cardapio-categoria">
                     <h4 class="cardapio-cat-titulo">${cat}</h4>
@@ -4559,12 +4923,65 @@
                                     ${!p.disponivel ? '<small class="texto-danger">Indisponível</small>' : ''}
                                 </div>
                                 <div class="cardapio-item-preco">R$ ${Number(p.preco_venda || 0).toFixed(2)}</div>
+                                <button class="btn btn-sm btn-secondary" onclick="editarConfigCardapio(${p.id_produto})">Editar</button>
                                 ${p.destaque ? '<span class="cardapio-badge-destaque">⭐ Destaque</span>' : ''}
                             </div>
                         `).join('')}
                     </div>
                 </div>
             `).join('') || '<p style="color:var(--text-light);text-align:center;">Nenhum produto no cardápio.</p>';
+        }
+
+        function carregarProdutosNoFormCardapio(lista) {
+            const select = document.getElementById('cardapio-produto');
+            if (!select) return;
+            select.innerHTML = '<option value="">Selecione um produto...</option>' +
+                (lista || []).map(p => `<option value="${p.id_produto}">${p.nome} - R$ ${Number(p.preco_venda || 0).toFixed(2)}</option>`).join('');
+        }
+
+        function editarConfigCardapio(idProduto) {
+            const produto = cardapioCache.find(p => Number(p.id_produto) === Number(idProduto));
+            if (!produto) return;
+            document.getElementById('cardapio-produto').value = produto.id_produto;
+            document.getElementById('cardapio-ordem').value = Number(produto.ordem_exibicao || 0);
+            document.getElementById('cardapio-imagem').value = produto.imagem_url || '';
+            document.getElementById('cardapio-destaque').checked = !!Number(produto.destaque || 0);
+            document.getElementById('cardapio-disponivel').checked = !!Number(produto.disponivel ?? 1);
+            document.getElementById('cardapio-descricao').value = produto.descricao_cardapio || '';
+            mostrarToast(`Configuração de ${produto.nome} carregada para edição.`, 'info');
+            window.scrollTo({ top: document.getElementById('tab-cardapio').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        function limparFormCardapio() {
+            document.getElementById('form-cardapio-config').reset();
+            document.getElementById('cardapio-disponivel').checked = true;
+            document.getElementById('cardapio-ordem').value = 0;
+        }
+
+        async function salvarConfiguracaoCardapio() {
+            const idProduto = Number(document.getElementById('cardapio-produto').value || 0);
+            const produtoSelecionado = cardapioCache.find(p => Number(p.id_produto) === idProduto);
+            const ordemInformada = Number(document.getElementById('cardapio-ordem').value || 0);
+            const body = {
+                id_produto: idProduto,
+                ordem_exibicao: ordemInformada || Number(produtoSelecionado?.ordem_exibicao || 0),
+                imagem_url: document.getElementById('cardapio-imagem').value,
+                destaque: document.getElementById('cardapio-destaque').checked,
+                disponivel: document.getElementById('cardapio-disponivel').checked,
+                descricao_cardapio: document.getElementById('cardapio-descricao').value || produtoSelecionado?.descricao_cardapio || produtoSelecionado?.descricao || ''
+            };
+            if (!body.id_produto) return mostrarToast('Selecione um produto.', 'warning');
+
+            const r = await fetch(`${API}/api/cardapio/configurar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const d = await r.json();
+            mostrarToast(d.message || 'Configuração salva.', r.ok ? 'success' : 'error');
+            if (r.ok) {
+                carregarCardapio();
+            }
         }
 
         /* ===== CENTRAL DE ATENDIMENTO ===== */
@@ -4646,13 +5063,19 @@
         async function salvarPedidoBalcao() {
             const itensTexto = document.getElementById('balcao-itens').value.trim();
             const itensJson = itensTexto ? JSON.stringify(itensTexto.split(',').map(x => ({ nome: x.trim() })).filter(x => x.nome)) : '[]';
+            const canal = document.getElementById('balcao-canal').value;
+            const prioridade = document.getElementById('balcao-prioridade').value;
+            const obsBase = document.getElementById('balcao-obs').value;
+            const totalInformado = Number(document.getElementById('balcao-total-pedido').value || 0);
+            const totalEstimado = estimarTotalItensTexto(itensTexto);
+            const totalFinal = totalInformado > 0 ? totalInformado : totalEstimado;
             const body = {
                 cliente_nome: document.getElementById('balcao-cliente').value || 'Cliente Balcão',
                 itens_json: itensJson,
-                valor_total: Number(document.getElementById('balcao-total-pedido').value || 0),
+                valor_total: totalFinal,
                 forma_pagamento: document.getElementById('balcao-pagamento').value,
-                observacao: document.getElementById('balcao-obs').value,
-                status: document.getElementById('balcao-status').value,
+                observacao: `${obsBase ? obsBase + ' | ' : ''}Canal: ${canal} | Prioridade: ${prioridade}`,
+                status: document.getElementById('balcao-status').value || 'aberto',
                 usuario: localStorage.getItem('usuarioLogado') || 'sistema'
             };
             if (body.valor_total <= 0) {
@@ -4728,17 +5151,24 @@
         async function salvarPedidoDelivery() {
             const itensTexto = document.getElementById('delivery-itens').value.trim();
             const itensJson = itensTexto ? JSON.stringify(itensTexto.split(',').map(x => ({ nome: x.trim() })).filter(x => x.nome)) : '[]';
+            const origem = document.getElementById('delivery-origem').value;
+            const previsao = Number(document.getElementById('delivery-previsao').value || 0);
+            const obsBase = document.getElementById('delivery-obs').value;
+            const totalInformado = Number(document.getElementById('delivery-valor').value || 0);
+            const totalEstimado = estimarTotalItensTexto(itensTexto);
+            const totalFinal = totalInformado > 0 ? totalInformado : totalEstimado;
+            const taxaEntrega = Number(document.getElementById('delivery-taxa').value || 0);
             const body = {
                 cliente_nome: document.getElementById('delivery-cliente').value.trim(),
                 telefone: document.getElementById('delivery-telefone').value,
                 endereco: document.getElementById('delivery-endereco').value.trim(),
                 bairro: document.getElementById('delivery-bairro').value,
                 itens_json: itensJson,
-                valor_total: Number(document.getElementById('delivery-valor').value || 0),
-                taxa_entrega: Number(document.getElementById('delivery-taxa').value || 0),
+                valor_total: totalFinal,
+                taxa_entrega: taxaEntrega,
                 forma_pagamento: document.getElementById('delivery-pagamento').value,
-                observacao: document.getElementById('delivery-obs').value,
-                status: document.getElementById('delivery-status').value,
+                observacao: `${obsBase ? obsBase + ' | ' : ''}Origem: ${origem}${previsao > 0 ? ` | Previsão: ${previsao} min` : ''}`,
+                status: document.getElementById('delivery-status').value || 'recebido',
                 usuario: localStorage.getItem('usuarioLogado') || 'sistema'
             };
             if (!body.cliente_nome || !body.endereco || body.valor_total <= 0) {
@@ -4756,6 +5186,7 @@
             if (r.ok) {
                 document.getElementById('form-delivery').reset();
                 document.getElementById('delivery-taxa').value = '0';
+                document.getElementById('delivery-previsao').value = '45';
                 carregarResumoDelivery();
                 carregarPedidosDelivery();
             }
@@ -4951,6 +5382,7 @@
         setInterval(carregarCozinha, 30000);
         setInterval(atualizarCozinha, 10000);
         setInterval(carregarMesas, 15000);
+        setInterval(carregarLancamentosMesa, 45000);
         setInterval(carregarTempoMesasCozinha, 45000);
         setInterval(atualizarFechamento, 60000);
         setInterval(carregarComissoes, 60000);

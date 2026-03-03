@@ -2317,6 +2317,115 @@ app.get('/api/mesas/resumo', (req, res) => {
     });
 });
 
+// Lançamentos por mesa (consumo rápido)
+app.get('/api/mesas/lancamentos', (req, res) => {
+    const numeroMesa = Number(req.query.numero_mesa || 0);
+    const limite = Math.min(Math.max(Number(req.query.limite || 60), 10), 200);
+
+    const where = [];
+    const params = [];
+    if (numeroMesa > 0) {
+        where.push('lm.numero_mesa = ?');
+        params.push(numeroMesa);
+    }
+
+    const sql = `
+        SELECT
+            lm.id_lancamento,
+            lm.numero_mesa,
+            lm.id_produto,
+            lm.item_nome,
+            lm.quantidade,
+            lm.valor_unitario,
+            lm.subtotal,
+            lm.observacao,
+            lm.usuario,
+            lm.criado_em,
+            p.nome as produto_nome
+        FROM lancamentos_mesa lm
+        LEFT JOIN produtos p ON p.id_produto = lm.id_produto
+        ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+        ORDER BY lm.criado_em DESC, lm.id_lancamento DESC
+        LIMIT ?
+    `;
+
+    params.push(limite);
+    db.query(sql, params, (err, rows) => {
+        if (err) return res.status(500).json({ success: false, message: 'Erro ao consultar lançamentos de mesa.' });
+        res.json(rows || []);
+    });
+});
+
+app.post('/api/mesas/lancamentos', (req, res) => {
+    const numeroMesa = Number(req.body.numero_mesa || 0);
+    const idProduto = Number(req.body.id_produto || 0) || null;
+    const quantidade = Number(req.body.quantidade || 0);
+    const valorUnitario = Number(req.body.valor_unitario || 0);
+    const observacao = String(req.body.observacao || '').trim();
+    const usuario = String(req.body.usuario || 'sistema').trim() || 'sistema';
+    const itemNomeDigitado = String(req.body.item_nome || '').trim();
+
+    if (!numeroMesa || numeroMesa < 1) {
+        return res.status(400).json({ success: false, message: 'Número da mesa inválido.' });
+    }
+    if (!quantidade || quantidade <= 0) {
+        return res.status(400).json({ success: false, message: 'Quantidade deve ser maior que zero.' });
+    }
+    if (!valorUnitario || valorUnitario <= 0) {
+        return res.status(400).json({ success: false, message: 'Valor unitário deve ser maior que zero.' });
+    }
+
+    db.query('SELECT numero_mesa FROM mesas WHERE numero_mesa = ? LIMIT 1', [numeroMesa], (mesaErr, mesaRows) => {
+        if (mesaErr) return res.status(500).json({ success: false, message: 'Erro ao validar mesa.' });
+        if (!mesaRows || !mesaRows.length) {
+            return res.status(404).json({ success: false, message: `Mesa ${numeroMesa} não encontrada.` });
+        }
+
+        const inserirLancamento = (nomeFinal, idProdutoFinal) => {
+            if (!nomeFinal) {
+                return res.status(400).json({ success: false, message: 'Informe o item do lançamento.' });
+            }
+
+            const subtotal = Number((quantidade * valorUnitario).toFixed(2));
+            const sqlInsert = `
+                INSERT INTO lancamentos_mesa
+                (numero_mesa, id_produto, item_nome, quantidade, valor_unitario, subtotal, observacao, usuario)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            db.query(
+                sqlInsert,
+                [numeroMesa, idProdutoFinal, nomeFinal, quantidade, valorUnitario, subtotal, observacao, usuario],
+                (insertErr, result) => {
+                    if (insertErr) return res.status(500).json({ success: false, message: 'Erro ao salvar lançamento da mesa.' });
+
+                    db.query("UPDATE mesas SET status = 'ocupada' WHERE numero_mesa = ? AND status <> 'ocupada'", [numeroMesa]);
+
+                    res.json({
+                        success: true,
+                        message: `Lançamento registrado na Mesa ${numeroMesa}.`,
+                        id_lancamento: result.insertId,
+                        subtotal
+                    });
+                }
+            );
+        };
+
+        if (idProduto) {
+            db.query('SELECT nome FROM produtos WHERE id_produto = ? LIMIT 1', [idProduto], (prodErr, prodRows) => {
+                if (prodErr) return res.status(500).json({ success: false, message: 'Erro ao validar produto.' });
+                if (!prodRows || !prodRows.length) {
+                    return res.status(404).json({ success: false, message: 'Produto informado não encontrado.' });
+                }
+                inserirLancamento(String(prodRows[0].nome || '').trim(), idProduto);
+            });
+            return;
+        }
+
+        inserirLancamento(itemNomeDigitado, null);
+    });
+});
+
 /* ===== BUSCA GLOBAL ===== */
 app.get('/api/busca-global', (req, res) => {
     const termo = (req.query.termo || '').trim();
@@ -2527,6 +2636,21 @@ const migracoes = [
         status ENUM('recebido','preparando','saiu_entrega','entregue','cancelado') DEFAULT 'recebido',
         criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
         atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS lancamentos_mesa (
+        id_lancamento INT AUTO_INCREMENT PRIMARY KEY,
+        numero_mesa INT NOT NULL,
+        id_produto INT NULL,
+        item_nome VARCHAR(180) NOT NULL,
+        quantidade DECIMAL(10,2) NOT NULL DEFAULT 1,
+        valor_unitario DECIMAL(10,2) NOT NULL DEFAULT 0,
+        subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+        observacao TEXT,
+        usuario VARCHAR(100),
+        criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_lanc_mesa_numero (numero_mesa),
+        INDEX idx_lanc_mesa_produto (id_produto),
+        INDEX idx_lanc_mesa_data (criado_em)
     )`
 ];
 
@@ -2535,7 +2659,7 @@ const tabelasVerificar = {
     fornecedores: 'nome', reservas: 'cliente_nome', movimentacoes_estoque: 'id_insumo',
     caixa: 'valor_inicial', avaliacoes: 'nota', despesas: 'descricao',
     audit_log: 'acao', alertas: 'tipo', cardapio_config: 'id_produto', metas: 'valor_meta',
-    pedidos_balcao: 'valor_total', pedidos_delivery: 'endereco'
+    pedidos_balcao: 'valor_total', pedidos_delivery: 'endereco', lancamentos_mesa: 'item_nome'
 };
 Object.entries(tabelasVerificar).forEach(([tabela, colunaCheck]) => {
     db.query(`SHOW COLUMNS FROM ${tabela} LIKE '${colunaCheck}'`, (err, rows) => {

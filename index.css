@@ -193,7 +193,7 @@ body {
     border-radius: 10px;
     padding: 10px 16px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 16px;
     cursor: pointer;
     transition: all var(--transition);
     min-height: 42px;
@@ -1435,9 +1435,15 @@ th.sortable.sort-desc::after { content: '↓'; opacity: 0.8; }
     gap: 4px;
 }
 .form-grid .form-group label {
-    font-size: 0.85em;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-secondary);
+}
+.form-grid .form-group input,
+.form-grid .form-group select,
+.form-grid .form-group textarea {
+    font-size: 1rem;
+    padding: 10px 12px;
 }
 .form-grid .full-width {
     grid-column: 1 / -1;
@@ -1716,8 +1722,18 @@ th.sortable.sort-desc::after { content: '↓'; opacity: 0.8; }
 
 .tab-btn {
     border-radius: 999px;
-    padding: 8px 14px;
+    padding: 10px 16px;
     font-weight: 600;
+    font-size: 15px;
+}
+
+.form-grid {
+    gap: 14px;
+}
+
+.form-grid .form-actions .btn {
+    font-size: 0.95rem;
+    padding: 10px 14px;
 }
 
 .panel {
@@ -1786,6 +1802,152 @@ th.sortable.sort-desc::after { content: '↓'; opacity: 0.8; }
     .pedido-actions .btn {
         min-width: 0;
         flex: 1;
+    }
+}
+
+/* ===== MODERNIZAÇÃO 2026 (OVERRIDES FINAIS) ===== */
+:root {
+    --card-bg-soft: rgba(255, 255, 255, 0.78);
+    --dashboard-gradient: linear-gradient(140deg, rgba(37, 99, 235, 0.08) 0%, rgba(16, 185, 129, 0.06) 42%, rgba(255, 255, 255, 0.72) 100%);
+    --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.08);
+    --shadow-md: 0 14px 34px rgba(15, 23, 42, 0.12);
+    --shadow-lg: 0 24px 64px rgba(15, 23, 42, 0.14);
+}
+
+[data-theme="dark"] {
+    --card-bg-soft: rgba(30, 41, 59, 0.72);
+    --dashboard-gradient: linear-gradient(140deg, rgba(56, 189, 248, 0.12) 0%, rgba(34, 197, 94, 0.10) 42%, rgba(15, 23, 42, 0.74) 100%);
+    --shadow-sm: 0 8px 20px rgba(2, 6, 23, 0.35);
+    --shadow-md: 0 16px 36px rgba(2, 6, 23, 0.45);
+    --shadow-lg: 0 28px 68px rgba(2, 6, 23, 0.55);
+}
+
+body {
+    background-image: radial-gradient(circle at 8% 0%, var(--accent-light) 0%, transparent 35%), radial-gradient(circle at 100% 100%, var(--accent-light) 0%, transparent 30%);
+}
+
+.dashboard-card {
+    border-radius: 24px;
+    border-color: color-mix(in srgb, var(--border) 86%, var(--accent) 14%);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-lg);
+}
+
+.header-row {
+    border-radius: 16px;
+    padding: 16px 22px;
+}
+
+.tabs-nav {
+    gap: 6px;
+    padding: 10px;
+    border-radius: 16px;
+    top: 10px;
+}
+
+.tab-btn {
+    min-height: 46px;
+    border-radius: 999px;
+    padding: 11px 18px;
+    font-size: 16px;
+    letter-spacing: 0.01em;
+}
+
+.tab-btn.active {
+    border-color: color-mix(in srgb, var(--tab-btn-active-border) 80%, transparent 20%);
+    background: linear-gradient(180deg, var(--tab-btn-active-bg) 0%, color-mix(in srgb, var(--tab-btn-active-bg) 88%, var(--accent-light) 12%) 100%);
+}
+
+.tab-content.active,
+.panel {
+    border-radius: 16px;
+}
+
+.panel {
+    padding: 22px;
+}
+
+.panel:hover {
+    transform: translateY(-2px);
+}
+
+button,
+.btn {
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+}
+
+.btn-sm {
+    min-height: 34px;
+    border-radius: 10px;
+}
+
+input,
+select,
+textarea,
+.form-panel .form-grid > label {
+    border-radius: 12px;
+    border-color: color-mix(in srgb, var(--border) 88%, var(--accent) 12%);
+}
+
+.form-grid {
+    gap: 16px;
+}
+
+.form-grid .form-group label {
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+table {
+    border-radius: 12px;
+}
+
+th {
+    backdrop-filter: blur(4px);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+}
+
+td {
+    font-size: 14px;
+}
+
+tbody tr {
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+tbody tr:hover {
+    transform: translateX(2px);
+}
+
+.resumo-card,
+.relatorio-card,
+.alerta-item,
+.cardapio-item {
+    border-radius: 14px;
+}
+
+.status-pill,
+.badge-count {
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 900px) {
+    .dashboard-card {
+        border-radius: 18px;
+    }
+
+    .header-row {
+        padding: 14px;
+    }
+
+    .tab-btn {
+        font-size: 15px;
     }
 }
 
