@@ -2492,7 +2492,7 @@ button:hover,
 }
 
 .form-panel {
-    max-width: 700px;
+    max-width: 860px;
     margin-left: 0;
     margin-right: auto;
 }
@@ -2514,8 +2514,12 @@ button:hover,
 .form-grid .form-group textarea {
     background: var(--white);
     border: 1px solid var(--border);
-    min-height: 46px;
-    font-size: 1rem;
+    min-height: 52px;
+    font-size: 1.05rem;
+}
+
+.form-grid .form-group textarea {
+    min-height: 120px;
 }
 
 .form-grid .form-actions {
@@ -2767,6 +2771,888 @@ button {
     .tab-content,
     .header-row {
         grid-column: 1;
+    }
+}
+
+/* ===== FULLSCREEN DO SISTEMA ===== */
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    padding: 10px;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.dashboard-card {
+    width: 96vw !important;
+    max-width: 96vw !important;
+    min-height: 94vh;
+    height: 94vh;
+    margin: 0 auto !important;
+    border-radius: 16px;
+    padding: 14px;
+}
+
+.tab-content {
+    min-height: 0;
+    height: calc(94vh - 28px);
+    overflow-y: auto;
+}
+
+@media (max-width: 980px) {
+    body {
+        overflow: auto;
+    }
+
+    .dashboard-card {
+        height: auto;
+        min-height: 100vh;
+        padding: 10px;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        border-radius: 0;
+    }
+
+    .tab-content {
+        height: auto;
+        overflow: visible;
+    }
+}
+
+/* ===== APP-LIKE LAYOUT (VISUAL DE APLICATIVO) ===== */
+body {
+    background: radial-gradient(circle at 50% -20%, rgba(124, 92, 255, 0.2), transparent 45%), #05070d;
+}
+
+.dashboard-card {
+    grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-rows: 68px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+    background: linear-gradient(180deg, #0d1220 0%, #080b14 100%);
+}
+
+.tabs-nav {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 8px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #0f1525 0%, #0a0f1b 100%);
+}
+
+.tab-btn {
+    min-height: 42px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: normal;
+}
+
+.tab-btn.active {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 16px rgba(124, 92, 255, 0.22);
+}
+
+.header-row {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 68px;
+    border-radius: 14px;
+    padding: 10px 14px;
+    background: linear-gradient(180deg, rgba(22, 28, 43, 0.96) 0%, rgba(15, 20, 34, 0.96) 100%);
+}
+
+.header-row h2 {
+    font-size: 1.12rem;
+    letter-spacing: 0;
+}
+
+.header-actions {
+    gap: 8px;
+}
+
+.header-actions input,
+.header-actions button {
+    min-height: 38px;
+}
+
+.tab-content {
+    grid-column: 2;
+    grid-row: 2;
+    padding-right: 2px;
+}
+
+.tab-content.active {
+    border-radius: 14px;
+    padding: 6px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.panel {
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.financeiro-topo,
+.resumo-financeiro-grid,
+.resumo-cards,
+.relatorio-grid {
+    gap: 8px;
+}
+
+.card-financeiro,
+.resumo-card,
+.relatorio-card {
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.card-financeiro h2 {
+    font-size: 1.35rem;
+}
+
+.form-panel {
+    max-width: 860px;
+}
+
+.form-grid {
+    gap: 12px;
+}
+
+.form-grid .form-group {
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.form-grid .form-group input,
+.form-grid .form-group select,
+.form-grid .form-group textarea {
+    min-height: 44px;
+    font-size: 0.95rem;
+}
+
+.form-grid .form-group textarea {
+    min-height: 96px;
+}
+
+.form-grid .form-actions .btn {
+    min-height: 42px;
+    min-width: 160px;
+    border-radius: 10px;
+}
+
+@media (max-width: 980px) {
+    body {
+        overflow: hidden;
+    }
+
+    .dashboard-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: 64px minmax(0, 1fr) 72px;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh;
+        min-height: 100vh;
+        padding: 8px;
+        border-radius: 0;
+    }
+
+    .header-row {
+        grid-column: 1;
+        grid-row: 1;
+        min-height: 64px;
+    }
+
+    .tab-content {
+        grid-column: 1;
+        grid-row: 2;
+        overflow-y: auto;
+        min-height: 0;
+        height: auto;
+        padding-bottom: 8px;
+    }
+
+    .tabs-nav {
+        grid-column: 1;
+        grid-row: 3;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        height: 72px;
+        padding: 6px;
+        border-radius: 14px;
+        overflow: hidden;
+        position: static;
+    }
+
+    .tab-btn {
+        min-height: 58px;
+        font-size: 0.72rem;
+        padding: 6px;
+    }
+
+    .header-actions #busca-global,
+    .header-actions #busca-global-resultados,
+    .header-actions #atualizar-btn {
+        display: none;
+    }
+}
+
+/* ===== AJUSTE FINAL: FONTE MAIOR NOS FORMULÁRIOS + DASHBOARD MAIOR ===== */
+.dashboard-card {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 12px;
+}
+
+.form-panel {
+    max-width: 980px;
+}
+
+.form-panel h3,
+.form-panel h4 {
+    font-size: 1.28rem;
+}
+
+.form-grid .form-group label {
+    font-size: 1.02rem;
+    font-weight: 700;
+}
+
+.form-grid .form-group input,
+.form-grid .form-group select,
+.form-grid .form-group textarea {
+    font-size: 1.08rem;
+    min-height: 54px;
+}
+
+.form-grid .form-group textarea {
+    min-height: 130px;
+}
+
+.form-grid .form-actions .btn {
+    font-size: 1.05rem;
+    min-height: 50px;
+    min-width: 190px;
+}
+
+@media (max-width: 980px) {
+    .dashboard-card {
+        height: auto;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    .form-panel {
+        max-width: 100%;
+    }
+
+    .form-grid .form-group label {
+        font-size: 0.96rem;
+    }
+
+    .form-grid .form-group input,
+    .form-grid .form-group select,
+    .form-grid .form-group textarea {
+        font-size: 1rem;
+        min-height: 48px;
+    }
+}
+
+/* ===== AJUSTE EXTRA (AUMENTAR MAIS) ===== */
+.dashboard-card {
+    padding: 14px;
+}
+
+.header-row h2 {
+    font-size: 1.28rem;
+}
+
+.tab-btn {
+    font-size: 0.88rem;
+    min-height: 48px;
+}
+
+.form-panel {
+    max-width: 1080px;
+}
+
+.form-panel h3,
+.form-panel h4 {
+    font-size: 1.38rem;
+}
+
+.form-grid {
+    gap: 16px;
+}
+
+.form-grid .form-group {
+    padding: 12px 14px;
+}
+
+.form-grid .form-group label {
+    font-size: 1.1rem;
+}
+
+.form-grid .form-group input,
+.form-grid .form-group select,
+.form-grid .form-group textarea {
+    font-size: 1.14rem;
+    min-height: 58px;
+    padding: 12px 14px;
+}
+
+.form-grid .form-group textarea {
+    min-height: 150px;
+}
+
+.form-grid .form-actions .btn {
+    font-size: 1.12rem;
+    min-height: 54px;
+    min-width: 220px;
+}
+
+@media (max-width: 980px) {
+    .header-row h2 {
+        font-size: 1.08rem;
+    }
+
+    .tab-btn {
+        font-size: 0.78rem;
+        min-height: 60px;
+    }
+
+    .form-panel {
+        max-width: 100%;
+    }
+
+    .form-panel h3,
+    .form-panel h4 {
+        font-size: 1.2rem;
+    }
+
+    .form-grid .form-group label {
+        font-size: 1rem;
+    }
+
+    .form-grid .form-group input,
+    .form-grid .form-group select,
+    .form-grid .form-group textarea {
+        font-size: 1.02rem;
+        min-height: 52px;
+    }
+}
+
+/* ===== ESCALA MÁXIMA: DASHBOARD + FORMULÁRIOS ===== */
+.dashboard-card {
+    padding: 16px;
+    gap: 14px;
+}
+
+.header-row {
+    min-height: 78px;
+    padding: 14px 18px;
+}
+
+.header-row h2 {
+    font-size: 1.42rem;
+}
+
+.tab-btn {
+    min-height: 54px;
+    font-size: 0.96rem;
+}
+
+.card-financeiro,
+.resumo-card,
+.relatorio-card,
+.panel {
+    padding: 18px;
+}
+
+.card-financeiro h2,
+.resumo-card span,
+.relatorio-card span {
+    font-size: 1.55rem;
+}
+
+.card-financeiro span,
+.resumo-card strong,
+.relatorio-card strong {
+    font-size: 0.95rem;
+}
+
+.form-panel {
+    max-width: 1200px;
+}
+
+.form-panel h3,
+.form-panel h4 {
+    font-size: 1.5rem;
+}
+
+.form-grid {
+    gap: 18px;
+}
+
+.form-grid .form-group {
+    padding: 14px 16px;
+}
+
+.form-grid .form-group label {
+    font-size: 1.18rem;
+}
+
+.form-grid .form-group input,
+.form-grid .form-group select,
+.form-grid .form-group textarea {
+    min-height: 64px;
+    font-size: 1.22rem;
+    padding: 14px 16px;
+}
+
+.form-grid .form-group textarea {
+    min-height: 170px;
+}
+
+.form-grid .form-actions .btn {
+    min-height: 60px;
+    min-width: 250px;
+    font-size: 1.18rem;
+}
+
+@media (max-width: 1200px) {
+    .header-row h2 {
+        font-size: 1.26rem;
+    }
+
+    .form-panel h3,
+    .form-panel h4 {
+        font-size: 1.34rem;
+    }
+
+    .form-grid .form-group label {
+        font-size: 1.06rem;
+    }
+
+    .form-grid .form-group input,
+    .form-grid .form-group select,
+    .form-grid .form-group textarea {
+        min-height: 56px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 980px) {
+    .dashboard-card {
+        padding: 10px;
+    }
+
+    .header-row {
+        min-height: 66px;
+    }
+
+    .header-row h2 {
+        font-size: 1.08rem;
+    }
+
+    .tab-btn {
+        min-height: 62px;
+        font-size: 0.8rem;
+    }
+
+    .form-panel {
+        max-width: 100%;
+    }
+
+    .form-panel h3,
+    .form-panel h4 {
+        font-size: 1.2rem;
+    }
+
+    .form-grid .form-group label {
+        font-size: 1rem;
+    }
+
+    .form-grid .form-group input,
+    .form-grid .form-group select,
+    .form-grid .form-group textarea {
+        min-height: 52px;
+        font-size: 1.02rem;
+    }
+
+    .form-grid .form-actions .btn {
+        min-height: 52px;
+        min-width: 180px;
+        font-size: 1.02rem;
+    }
+}
+
+/* ===== DASHBOARD AINDA MAIOR (NOVO AJUSTE) ===== */
+.dashboard-card {
+    padding: 18px;
+    gap: 16px;
+}
+
+.header-row {
+    min-height: 84px;
+    padding: 16px 20px;
+}
+
+.header-row h2 {
+    font-size: 1.6rem;
+}
+
+.financeiro-topo,
+.resumo-financeiro-grid,
+.resumo-cards,
+.relatorio-grid {
+    gap: 14px;
+}
+
+.card-financeiro,
+.resumo-card,
+.relatorio-card {
+    padding: 22px;
+}
+
+.card-financeiro h2,
+.resumo-card span,
+.relatorio-card span {
+    font-size: 1.8rem;
+}
+
+.card-financeiro span,
+.resumo-card strong,
+.relatorio-card strong {
+    font-size: 1.02rem;
+}
+
+.panel {
+    padding: 20px;
+}
+
+@media (max-width: 980px) {
+    .dashboard-card {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .header-row {
+        min-height: 70px;
+        padding: 12px;
+    }
+
+    .header-row h2 {
+        font-size: 1.2rem;
+    }
+
+    .card-financeiro,
+    .resumo-card,
+    .relatorio-card,
+    .panel {
+        padding: 14px;
+    }
+
+    .card-financeiro h2,
+    .resumo-card span,
+    .relatorio-card span {
+        font-size: 1.3rem;
+    }
+}
+
+/* ===== TÍTULO PRINCIPAL GRANDE ===== */
+.header-row h2 {
+    font-size: 2.1rem;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: none;
+}
+
+@media (max-width: 1200px) {
+    .header-row h2 {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 980px) {
+    .header-row h2 {
+        font-size: 1.35rem;
+    }
+}
+
+/* ===== RETÂNGULO DO TÍTULO MAIOR ===== */
+.header-row {
+    min-height: 106px;
+    padding: 20px 24px;
+    border-radius: 18px;
+}
+
+@media (max-width: 1200px) {
+    .header-row {
+        min-height: 92px;
+        padding: 16px 18px;
+    }
+}
+
+@media (max-width: 980px) {
+    .header-row {
+        min-height: 78px;
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+}
+
+/* ===== BLOCO DO TÍTULO MAIS HORIZONTAL ===== */
+.dashboard-card {
+    grid-template-columns: 68px minmax(0, 1fr);
+}
+
+.header-row {
+    width: 100%;
+    min-height: 86px;
+    padding: 12px 36px;
+}
+
+.header-row h2 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 980px) {
+    .dashboard-card {
+        grid-template-columns: 1fr;
+    }
+
+    .header-row {
+        min-height: 72px;
+        padding: 10px 14px;
+    }
+
+    .header-row h2 {
+        white-space: normal;
+    }
+}
+
+/* ===== FORMATO FINAL DO SISTEMA (NORMALIZAÇÃO GLOBAL) ===== */
+body {
+    padding: 8px;
+}
+
+.dashboard-card {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 12px;
+    width: 95vw !important;
+    max-width: 95vw !important;
+    height: 93vh;
+    min-height: 93vh;
+    border-radius: 16px;
+    padding: 12px;
+}
+
+.tabs-nav {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    height: 100%;
+    max-height: none;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 14px;
+}
+
+.header-row {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    min-height: 64px;
+}
+
+.tab-content {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+    height: auto;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.tab-content.active {
+    display: block;
+    border-radius: 14px;
+    padding: 8px;
+}
+
+.panel {
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.financeiro-topo,
+.resumo-financeiro-grid,
+.resumo-cards,
+.relatorio-grid {
+    gap: 10px;
+}
+
+.form-panel {
+    max-width: 840px;
+    width: 100%;
+}
+
+.form-grid {
+    gap: 14px;
+}
+
+.form-grid .form-group {
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.form-grid .form-group label {
+    font-size: 0.9rem;
+}
+
+.form-grid .form-group input,
+.form-grid .form-group select,
+.form-grid .form-group textarea {
+    min-height: 48px;
+    font-size: 0.98rem;
+}
+
+.form-grid .form-group textarea {
+    min-height: 110px;
+}
+
+.form-grid .form-actions {
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.form-grid .form-actions .btn {
+    min-height: 44px;
+    min-width: 170px;
+}
+
+table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-card {
+        grid-template-columns: 190px minmax(0, 1fr);
+    }
+
+    .tab-btn {
+        font-size: 0.86rem;
+        min-height: 38px;
+    }
+}
+
+@media (max-width: 980px) {
+    .dashboard-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto minmax(0, 1fr);
+        width: 100vw !important;
+        max-width: 100vw !important;
+        min-height: 100vh;
+        height: auto;
+        border-radius: 0;
+    }
+
+    .tabs-nav {
+        grid-column: 1;
+        grid-row: 2;
+        position: static;
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow: visible;
+    }
+
+    .header-row {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .tab-content {
+        grid-column: 1;
+        grid-row: 3;
+        overflow: visible;
+    }
+
+    .form-panel {
+        max-width: 100%;
+    }
+}
+
+/* ===== TELA CHEIA FINAL ===== */
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dashboard-card {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh;
+    min-height: 100vh;
+    margin: 0 !important;
+    border-radius: 0;
+    padding: 10px;
+}
+
+.tab-content {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+@media (max-width: 980px) {
+    body {
+        overflow: auto;
+    }
+
+    .dashboard-card {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        min-height: 100vh;
+        height: auto;
+        border-radius: 0;
+        padding: 8px;
+    }
+
+    .tab-content {
+        height: auto;
+        overflow: visible;
     }
 }
 

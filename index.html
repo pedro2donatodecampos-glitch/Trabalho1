@@ -2394,7 +2394,15 @@
                 document.getElementById('lancamento-mesa-obs').value = '';
                 document.getElementById('lancamento-mesa-produto').value = '';
 
-                await Promise.allSettled([carregarMesas(), carregarLancamentosMesa(), carregarDashboardDetalhes()]);
+                await Promise.allSettled([
+                    carregarMesas(),
+                    carregarLancamentosMesa(),
+                    carregarDashboardDetalhes(),
+                    carregarCozinha(),
+                    atualizarCozinha(),
+                    carregarResumoCozinha(),
+                    carregarTempoMesasCozinha()
+                ]);
             } catch (erro) {
                 mostrarToast('Erro de conexão ao registrar lançamento da mesa.', 'error');
             } finally {

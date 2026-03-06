@@ -49,6 +49,28 @@ function escolherColuna(colunas, candidatas) {
     return candidatas.find(coluna => colunas.includes(coluna)) || null;
 }
 
+function obterFonteCozinhaSql(alias = 'cozinha_base') {
+    return `
+        (
+            SELECT
+                numero_mesa,
+                prato,
+                COALESCE(minutos_espera, 0) as minutos_espera,
+                'pedido' as origem
+            FROM v_pedidos_atrasados
+
+            UNION ALL
+
+            SELECT
+                lm.numero_mesa,
+                lm.item_nome as prato,
+                TIMESTAMPDIFF(MINUTE, lm.criado_em, NOW()) as minutos_espera,
+                'lancamento_mesa' as origem
+            FROM lancamentos_mesa lm
+        ) ${alias}
+    `;
+}
+
 app.get('/api/lucratividade', (req, res) => {
     const sql = 'SELECT * FROM v_lucratividade_produtos';
     db.query(sql, (err, results) => {
@@ -134,7 +156,7 @@ app.get('/api/dashboard/detalhes', (req, res) => {
         SELECT
             (SELECT COUNT(*) FROM mesas WHERE LOWER(COALESCE(status, '')) = 'ocupada') as mesas_ocupadas,
             (SELECT COUNT(*) FROM mesas WHERE LOWER(COALESCE(status, '')) = 'livre') as mesas_livres,
-            (SELECT COUNT(*) FROM v_pedidos_atrasados) as pedidos_atrasados,
+            (SELECT COUNT(*) FROM ${obterFonteCozinhaSql('cozinha_base')}) as pedidos_atrasados,
             (SELECT COUNT(*) FROM usuarios) as total_usuarios,
             (SELECT COUNT(*) FROM usuarios WHERE LOWER(COALESCE(nivel, '')) = 'admin') as usuarios_admin,
             (SELECT COUNT(*) FROM usuarios WHERE LOWER(COALESCE(nivel, '')) = 'operador') as usuarios_operador
@@ -181,7 +203,7 @@ app.get('/api/cozinha/resumo', (req, res) => {
             COALESCE(AVG(minutos_espera), 0) as media_minutos_espera,
             COALESCE(MAX(minutos_espera), 0) as maior_espera,
             COALESCE(SUM(CASE WHEN minutos_espera >= 15 THEN 1 ELSE 0 END), 0) as pedidos_criticos
-        FROM v_pedidos_atrasados
+        FROM ${obterFonteCozinhaSql('cozinha_base')}
         WHERE ${where.join(' AND ')}
     `;
 
@@ -1331,8 +1353,8 @@ app.get('/api/cozinha', (req, res) => {
     }
 
     const sql = `
-        SELECT *
-        FROM v_pedidos_atrasados
+        SELECT numero_mesa, prato, minutos_espera, origem
+        FROM ${obterFonteCozinhaSql('cozinha_base')}
         WHERE ${where.join(' AND ')}
         ORDER BY minutos_espera DESC
         LIMIT ?
@@ -1437,8 +1459,8 @@ app.get('/api/cozinha/pendentes', (req, res) => {
     }
 
     const sql = `
-        SELECT *
-        FROM v_pedidos_atrasados
+        SELECT numero_mesa, prato, minutos_espera, origem
+        FROM ${obterFonteCozinhaSql('cozinha_base')}
         WHERE ${where.join(' AND ')}
         ORDER BY ${ordemSql}
         LIMIT ?
@@ -1480,7 +1502,7 @@ app.get('/api/cozinha/tempo-mesas', (req, res) => {
             COUNT(*) as pedidos,
             COALESCE(AVG(minutos_espera), 0) as media_espera,
             COALESCE(MAX(minutos_espera), 0) as maior_espera
-        FROM v_pedidos_atrasados
+        FROM ${obterFonteCozinhaSql('cozinha_base')}
         WHERE ${where.join(' AND ')}
         GROUP BY numero_mesa
         ORDER BY maior_espera DESC, media_espera DESC
