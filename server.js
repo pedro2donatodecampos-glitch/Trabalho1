@@ -2,23 +2,35 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 
+const PORT = Number(process.env.PORT || 3000);
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_USER = process.env.DB_USER || 'root';
+const DB_PASSWORD = process.env.DB_PASSWORD || '';
+const DB_NAME = process.env.DB_NAME || 'restaurante_db';
+const DB_PORT = Number(process.env.DB_PORT || 3306);
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'restaurante_db'
+const db = mysql.createPool({
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_NAME,
+    port: DB_PORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect(err => {
+db.getConnection((err, connection) => {
     if (err) {
-        console.error('Erro ao conectar:', err);
+        console.error('Erro ao conectar no MySQL:', err.message);
         return;
     }
-    console.log('Conectado ao MySQL!');
+    console.log(`MySQL conectado em ${DB_HOST}:${DB_PORT}/${DB_NAME}`);
+    connection.release();
 });
 
 function obterDiasPeriodo(periodo) {
@@ -3386,6 +3398,41 @@ app.get('/api/relatorio-gerencial', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log('Backend rodando em http://localhost:3000');
+app.get('/api/health', (req, res) => {
+    db.query('SELECT 1 AS ok', (err) => {
+        if (err) {
+            return res.status(500).json({
+                status: 'error',
+                database: 'disconnected',
+                message: err.message
+            });
+        }
+
+        res.json({
+            status: 'ok',
+            database: 'connected',
+            port: PORT
+        });
+    });
 });
+
+const server = app.listen(PORT, () => {
+    console.log(`Backend rodando em http://localhost:${PORT}`);
+});
+
+function gracefulShutdown(signal) {
+    console.log(`Recebido ${signal}. Encerrando servidor...`);
+    server.close(() => {
+        db.end((err) => {
+            if (err) {
+                console.error('Erro ao encerrar pool MySQL:', err.message);
+            } else {
+                console.log('Pool MySQL encerrado.');
+            }
+            process.exit(0);
+        });
+    });
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
